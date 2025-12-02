@@ -25,7 +25,7 @@ const client = new Client({
     GatewayIntentBits.AutoModerationExecution,
   ],
   presence: {
-    activities: [{ name: '/task | Managing Tasks', type: 0 }], // 0 = Playing
+    activities: [{ name: '/task | DFanso\'s Task Mangin PA', type: 0 }], // 0 = Playing
     status: 'online',
   },
 });

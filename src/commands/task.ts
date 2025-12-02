@@ -31,9 +31,8 @@ export default {
                 .setDescription('Complete a task')
         ),
     async execute(interaction: ChatInputCommandInteraction) {
-        if (interaction.user.id !== process.env.OWNER_ID) {
-            return interaction.reply({ content: 'You are not authorized to use this bot.', flags: MessageFlags.Ephemeral });
-        }
+        // Removed OWNER_ID check to allow multi-user access
+        // if (interaction.user.id !== process.env.OWNER_ID) { ... }
 
         const subcommand = interaction.options.getSubcommand();
 
@@ -64,17 +63,19 @@ export default {
             const tasks = await Task.find({
                 userId: interaction.user.id,
                 date: { $gte: startOfDay, $lte: endOfDay },
-            }).sort({ priority: -1 }); // Note: This sort might need adjustment as 'High' > 'Low' alphabetically, but we want logical sort. 
-            // Actually 'High' < 'Low' < 'Medium' alphabetically. 
-            // Let's sort manually in JS for better precision if needed, or rely on enum order if we change schema.
-            // For now, let's sort in memory to be safe.
-
-            const priorityOrder = { 'High': 3, 'Medium': 2, 'Low': 1 };
-            tasks.sort((a, b) => priorityOrder[b.priority] - priorityOrder[a.priority]);
+            });
 
             const totalTasks = tasks.length;
             const completedTasks = tasks.filter(t => t.completed).length;
             const pendingTasks = tasks.filter(t => !t.completed);
+
+            // Sort pending tasks by priority (High > Medium > Low)
+            const priorityOrder: { [key: string]: number } = { 'High': 3, 'Medium': 2, 'Low': 1 };
+            pendingTasks.sort((a, b) => {
+                const pA = priorityOrder[a.priority] || 0;
+                const pB = priorityOrder[b.priority] || 0;
+                return pB - pA;
+            });
 
             if (totalTasks === 0) {
                 return interaction.reply({ content: 'No tasks found for today! 🎉', flags: MessageFlags.Ephemeral });
@@ -90,7 +91,7 @@ export default {
 
             // Determine Color based on highest priority pending task
             const highestPriority = pendingTasks.length > 0 ? pendingTasks[0].priority : 'Low';
-            const colorMap = { 'High': 0xFF0000, 'Medium': 0xFFA500, 'Low': 0x00FF00 }; // Red, Orange, Green
+            const colorMap: { [key: string]: number } = { 'High': 0xFF0000, 'Medium': 0xFFA500, 'Low': 0x00FF00 };
             const embedColor = pendingTasks.length === 0 ? 0x00FF00 : colorMap[highestPriority];
 
             const embed = new EmbedBuilder()
@@ -119,7 +120,7 @@ export default {
                         .setDisabled(pendingTasks.length === 0)
                 );
 
-            await interaction.reply({ embeds: [embed], components: [row] });
+            await interaction.reply({ embeds: [embed], components: [row], flags: MessageFlags.Ephemeral });
         } else if (subcommand === 'complete') {
             // Fetch pending tasks to show in a select menu
             const tasks = await Task.find({

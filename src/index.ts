@@ -24,6 +24,10 @@ const client = new Client({
     GatewayIntentBits.GuildVoiceStates,
     GatewayIntentBits.AutoModerationExecution,
   ],
+  presence: {
+    activities: [{ name: '/task | Managing Tasks', type: 0 }], // 0 = Playing
+    status: 'online',
+  },
 });
 
 // Dynamically read event files

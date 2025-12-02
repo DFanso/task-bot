@@ -47,9 +47,7 @@ export default {
 
     // Handle Modal Submissions
     if (interaction.isModalSubmit() && interaction.customId.startsWith('addTaskModal')) {
-      if (interaction.user.id !== process.env.OWNER_ID) {
-        return interaction.reply({ content: 'Unauthorized', flags: MessageFlags.Ephemeral });
-      }
+      // Removed OWNER_ID check
 
       const description = interaction.fields.getTextInputValue('taskDescription');
 
@@ -73,10 +71,6 @@ export default {
 
     // Handle Select Menus
     else if (interaction.isStringSelectMenu() && interaction.customId === 'completeTaskSelect') {
-      if (interaction.user.id !== process.env.OWNER_ID) {
-        return interaction.reply({ content: 'Unauthorized', flags: MessageFlags.Ephemeral });
-      }
-
       const taskId = interaction.values[0];
       try {
         await Task.findByIdAndUpdate(taskId, { completed: true });
@@ -89,12 +83,7 @@ export default {
 
     // Handle Buttons
     else if (interaction.isButton() && interaction.customId === 'triggerCompleteTask') {
-      if (interaction.user.id !== process.env.OWNER_ID) {
-        return interaction.reply({ content: 'Unauthorized', flags: MessageFlags.Ephemeral });
-      }
-
       // Reuse the logic from the /task complete command
-      // Ideally this should be refactored into a shared function, but for now we duplicate for speed/safety
       const tasks = await Task.find({
         userId: interaction.user.id,
         completed: false
@@ -104,7 +93,7 @@ export default {
         return interaction.reply({ content: 'No pending tasks to complete!', flags: MessageFlags.Ephemeral });
       }
 
-      const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js'); // Import locally if needed or ensure top-level import
+      const { ActionRowBuilder, StringSelectMenuBuilder } = require('discord.js');
 
       const selectMenu = new StringSelectMenuBuilder()
         .setCustomId('completeTaskSelect')

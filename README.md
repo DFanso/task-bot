@@ -1,41 +1,43 @@
-# Discord Bot Boilerplate
+# Task Bot
 
 ![Bun](https://img.shields.io/badge/Bun-v1.1-black)
 ![Discord.js](https://img.shields.io/badge/discord.js-v14-blue)
 ![TypeScript](https://img.shields.io/badge/typescript-v5-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Issues](https://img.shields.io/github/issues/DFanso/discord-bot-boilerplate)
-![Forks](https://img.shields.io/github/forks/DFanso/discord-bot-boilerplate)
-![Stars](https://img.shields.io/github/stars/DFanso/discord-bot-boilerplate)
 
-A boilerplate for building Discord bots using TypeScript, Discord.js, and Bun.
+A powerful and privacy-focused Discord Task Management Bot built with TypeScript, Discord.js, and Bun.
+
+## Features
+
+-   **📝 Task Management**: Add, view, and complete tasks directly from Discord.
+-   **🔥 Priority Support**: Assign priorities (High, Medium, Low) to your tasks.
+-   **📊 Visual Progress**: View your daily progress with a visual progress bar.
+-   **🎨 Dynamic UI**: Embed colors change based on the highest priority task.
+-   **⚡ Quick Actions**: Complete tasks instantly with interactive buttons.
+-   **🔒 Privacy Focused**: Each user has their own private task list.
+-   **👻 Ephemeral Responses**: Task views are private and only visible to you.
 
 ## Table of Contents
 
-- [Discord Bot Boilerplate](#discord-bot-boilerplate)
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
-  - [Usage](#usage)
-  - [Project Structure](#project-structure)
-  - [Commands and Events](#commands-and-events)
-    - [Example Command (`src/commands/hello.ts`)](#example-command-srccommandshellots)
-    - [Example Event (`src/events/ready.ts`)](#example-event-srceventsreadyts)
-  - [Contributing](#contributing)
-  - [License](#license)
+-   [Installation](#installation)
+-   [Configuration](#configuration)
+-   [Usage](#usage)
+-   [Commands](#commands)
+-   [Project Structure](#project-structure)
+-   [License](#license)
 
 ## Installation
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/DFanso/discord-bot-boilerplate.git
-   cd discord-bot-boilerplate
-   ```
+1.  Clone the repository:
+    ```sh
+    git clone https://github.com/DFanso/task-bot.git
+    cd task-bot
+    ```
 
-2. Install the dependencies:
-   ```sh
-   bun install
-   ```
+2.  Install the dependencies:
+    ```sh
+    bun install
+    ```
 
 ## Configuration
 
@@ -45,103 +47,49 @@ Rename `.env.example` file to `.env` and add your configuration:
 MONGO_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
 TOKEN=YOUR_BOT_TOKEN
 CLIENT_ID=YOUR_CLIENT_ID
+OWNER_ID=YOUR_DISCORD_ID
 NODE_ENV=development
 ```
 
 ## Usage
 
-To start the bot in development mode (with hot reload):
-
-```sh
-bun run dev
-```
-
-To start the bot in production mode:
-
-```sh
-bun run start:prod
-```
-
-To register slash commands:
+{{ ... }}
 
 ```sh
 bun run deploy
 ```
 
-To check for type errors:
+## Commands
 
-```sh
-bun run typecheck
-```
+### `/task add`
+Adds a new task.
+-   **Options**: `priority` (Optional) - Select High, Medium, or Low.
+-   **Interaction**: Opens a Modal to enter the task description.
+
+### `/task view`
+Views your tasks for the current day.
+-   **Output**: An ephemeral embed showing your tasks sorted by priority, with a progress bar and a "Complete a Task" button.
+
+### `/task complete`
+Completes a task.
+-   **Interaction**: Shows a dropdown menu to select a task to mark as done.
 
 ## Project Structure
 
 ```
-discord-bot-boilerplate/
+task-bot/
 ├── src/
-│   ├── commands/
-│   │   └── hello.ts
-│   ├── events/
-│   │   └── ready.ts
-│   ├── services/
-│   │   └── UserService.ts
-│   ├── models/
-│   │   └── user.ts
-│   ├── dto/
-│   │   └── UserDTO.ts
-│   ├── utils/
-│   │   └── deploy.ts
-│   │   └── database.ts
-│   └── index.ts
+│   ├── commands/       # Slash command definitions
+│   │   └── task.ts
+│   ├── events/         # Event handlers (interactionCreate, ready)
+│   ├── models/         # Mongoose models (Task, User)
+│   ├── services/       # Business logic services
+│   ├── utils/          # Utility functions (database, deploy)
+│   └── index.ts        # Bot entry point
 ├── package.json
 ├── tsconfig.json
 └── nodemon.json
 ```
-
-- **commands/**: Directory for command files.
-- **events/**: Directory for event files.
-- **services/**: Directory for additional services.
-- **dtos/**: Directory for Data Transfer Objects.
-- **utils/**: Directory for utility files, such as database connection.
-- **index.ts**: Entry point of the bot.
-
-## Commands and Events
-
-- Commands are stored in the `src/commands` directory and must export a `data` property with command metadata and an `execute` function.
-- Events are stored in the `src/events` directory and must export a `name` and `execute` function.
-
-### Example Command (`src/commands/hello.ts`)
-
-```typescript
-import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-
-export default {
-  data: new SlashCommandBuilder()
-    .setName('hello')
-    .setDescription('Replies with Hello!'),
-  async execute(interaction: ChatInputCommandInteraction) {
-    await interaction.reply('Hello!');
-  },
-};
-```
-
-### Example Event (`src/events/ready.ts`)
-
-```typescript
-import { Client, Events } from 'discord.js';
-
-export default {
-  name: Events.ClientReady,
-  once: true,
-  execute(client: Client) {
-    console.log(`${client.user?.tag} is online!`);
-  },
-};
-```
-
-## Contributing
-
-Contributions are welcome! Please create a pull request or open an issue to discuss your ideas.
 
 ## License
 
